@@ -31,7 +31,5 @@ def weather_model(mode):
                         print(f"Warning: Invalid data on line {set_num + 1}. Skipping.")
         except FileNotFoundError:
             print("Error: spam.txt not found.")
-
-# Choose the mode of operation
 mode = input("Enter mode ('hardcoded', 'input', or 'file'): ").lower()
 weather_model(mode)
