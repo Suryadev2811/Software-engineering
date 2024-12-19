@@ -1,35 +1,75 @@
-def quadratic_solution(a, b, time, c):  
-    discriminant = b**2 - 4*a*(c - time) 
-    sol1 = (-b - discriminant**0.5) / (2*a)
-    sol2 = (-b + discriminant**0.5) / (2*a)
-    return sol1, sol2
+#waterfall model
+def calculate_weather_model(T, H, W):
+    weather_value = 0.5 * T**2 - 0.2 * H + 0.1 * W - 15
+    return weather_value
 
-def weather_model(mode):
-    if mode == "hardcoded":
-        a, b, c = 0.5, -2.0, 20.0
-        for time in range(1, 4):
-            temp = quadratic_solution(a, b, time, c)[1]
-            print(f"Temperature at time {time}: {temp:.2f} degrees")
-    elif mode == "input":
-        a = float(input("Enter coefficient a: "))
-        b = float(input("Enter coefficient b: "))
-        c = float(input("Enter initial temperature: "))
-        for time in range(1, 4):
-            temp = quadratic_solution(a, b, time, c)[1]
-            print(f"Temperature at time {time}: {temp:.2f} degrees")
-    elif mode == "file":
-        try:
-            with open('spam.txt', 'r') as file:
-                for set_num, line in enumerate(file):
-                    try:
-                        a, b, c = [float(value) for value in line.strip().split() if value]
-                        print(f"Weather simulation for set {set_num + 1}:")
-                        for time in range(1, 4):
-                            temp = quadratic_solution(a, b, time, c)[1]
-                            print(f"  Temperature at time {time}: {temp:.2f} degrees")
-                    except ValueError:
-                        print(f"Warning: Invalid data on line {set_num + 1}. Skipping.")
-        except FileNotFoundError:
-            print("Error: spam.txt not found.")
-mode = input("Enter mode ('hardcoded', 'input', or 'file'): ").lower()
-weather_model(mode)
+def categorize_weather(weather_value):
+    if weather_value >= 20:
+        return "Sunny"
+    elif 10 <= weather_value < 20:
+        return "Cloudy"
+    elif 0 <= weather_value < 10:
+        return "Rainy"
+    else:
+        return "Stormy"
+
+def hardcoded_weather_model():
+    T, H, W = 30, 50, 10
+    weather_value = calculate_weather_model(T, H, W)
+    category = categorize_weather(weather_value)
+    print(f"Hardcoded: W = {weather_value:.2f}, Category = {category}")
+
+def keyboard_weather_model():
+    T = float(input("Enter Temperature (T): "))
+    H = float(input("Enter Humidity (H): "))
+    W = float(input("Enter Wind Speed (W): "))
+    weather_value = calculate_weather_model(T, H, W)
+    category = categorize_weather(weather_value)
+    print(f"Keyboard Input: W = {weather_value:.2f}, Category = {category}")
+
+def file_weather_model():
+    try:
+        with open("spam.txt", "r") as file:
+            lines = file.readlines()
+        for idx, line in enumerate(lines):
+            T, H, W = map(float, line.strip().split())
+            weather_value = calculate_weather_model(T, H, W)
+            category = categorize_weather(weather_value)
+            print(f"File Input (Set {idx + 1}): W = {weather_value:.2f}, Category = {category}")
+    except FileNotFoundError:
+        print("Error: File 'spam.txt' not found.")
+    except ValueError:
+        print("Error: Invalid data format in 'spam.txt'.")
+
+def loop_weather_model():
+    num_sets = int(input("Enter number of input sets: "))
+    for i in range(num_sets):
+        print(f"\nSet {i + 1}:")
+        T = float(input("Enter Temperature (T): "))
+        H = float(input("Enter Humidity (H): "))
+        W = float(input("Enter Wind Speed (W): "))
+        weather_value = calculate_weather_model(T, H, W)
+        category = categorize_weather(weather_value)
+        print(f"Set {i + 1}: W = {weather_value:.2f}, Category = {category}")
+
+def main():
+    print("Weather Prediction Quadratic Model")
+    print("1. Hardcoded Values")
+    print("2. Keyboard Input")
+    print("3. File Input ('spam.txt')")
+    print("4. Loop for Multiple Keyboard Inputs")
+    choice = int(input("Choose an option (1-4): "))
+    
+    if choice == 1:
+        hardcoded_weather_model()
+    elif choice == 2:
+        keyboard_weather_model()
+    elif choice == 3:
+        file_weather_model()
+    elif choice == 4:
+        loop_weather_model()
+    else:
+        print("Invalid choice. Exiting.")
+
+if __name__ == "__main__":
+    main()
